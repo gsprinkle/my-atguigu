@@ -29,9 +29,9 @@ import org.junit.Test;
  * 
  * 3. 选择器（Selector）：是 SelectableChannel 的多路复用器。用于监控 SelectableChannel 的 IO 状况
  * 
- * 案例：客户端发送一个文件，服务端接收并保存该文件，并且给客户端发送反馈信息！
+ * 案例：客户端发送一个文件，服务端接收并保存该文件！
  */
-public class TestBlockingNIO {
+public class TestBlockingNIO2 {
 	
 	@Test
 	public void client() throws IOException{
@@ -47,7 +47,18 @@ public class TestBlockingNIO {
 			sChannel.write(bBuf);
 			bBuf.clear();
 		}
-		// 5. 关闭通道
+		
+		// 结束发送数据的连接,如果不结束，就会造成阻塞，永远接收不到服务端的反馈
+		sChannel.shutdownOutput();
+		
+		// 5. 接受服务端的反馈
+		int len =0;
+		while((len = sChannel.read(bBuf)) != -1){
+			bBuf.flip();
+			System.out.println(new String(bBuf.array(),0,len));
+			bBuf.clear();
+		}
+		// 6. 关闭通道
 		inChannel.close();
 		sChannel.close();
 		
@@ -69,8 +80,11 @@ public class TestBlockingNIO {
 			outChannel.write(bBuf);
 			bBuf.clear();
 		}
-		
-		// 4. 关闭资源
+		// 4. 给客户端反馈一条消息
+		bBuf.put("文件已收到".getBytes());
+		bBuf.flip();
+		sChannel.write(bBuf);
+		// 5. 关闭资源
 		outChannel.close();
 		sChannel.close();
 		ssChannel.close();
