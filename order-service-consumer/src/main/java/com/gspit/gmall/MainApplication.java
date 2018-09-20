@@ -14,7 +14,10 @@ public class MainApplication {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("consumer.xml");
 		OrderService orderService = context.getBean(OrderService.class);
 		List<UserAddress> list = orderService.initOrder("1");
-		System.out.println(list);
+		for (UserAddress userAddress : list) {
+			System.out.println(userAddress.getUserAddress());
+		}
+		System.out.println("Invoke Success!");
 		System.in.read();
 	}
 }

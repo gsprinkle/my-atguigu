@@ -7,12 +7,17 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
+	
 	<!-- 开启包扫描 -->
 	<context:component-scan base-package="com.gspit.gmall.service"></context:component-scan>
 	<!-- 应用名称 -->
 	<dubbo:application name="order-service-consumer"></dubbo:application>
 	<!-- 注册中心地址 -->
 	<dubbo:registry protocol="zookeeper" address="127.0.0.1:2181"></dubbo:registry>
-	<!-- 引用接口 -->
-	<dubbo:reference interface="com.gspit.gmall.service.UserService" id="userService"></dubbo:reference>
+	
+	<!-- 引用接口 --><!-- 关闭启动检查 --><!-- 开启本地存根 -->
+	<dubbo:reference interface="com.gspit.gmall.service.UserService" id="userService"
+		timeout="1000" retries="3" check="false" 
+		stub="com.gspit.gmall.service.UserServiceStub"
+		></dubbo:reference>
 </beans>
